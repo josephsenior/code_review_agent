@@ -49,10 +49,13 @@ pip install -r requirements.txt
 ```
 
 2. **Set up environment:**
-```bash
-cp .env.example .env
-# Edit .env and add your OPENAI_API_KEY
-```
+   
+   Create a `.env` file in the project root and add your OpenAI API key:
+   ```bash
+   OPENAI_API_KEY=your_actual_api_key_here
+   ```
+   
+   You can get an API key from [OpenAI's platform](https://platform.openai.com/api-keys).
 
 3. **Run the application:**
 ```bash

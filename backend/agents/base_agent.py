@@ -49,17 +49,8 @@ class BaseCodeReviewAgent(ABC):
         self.system_prompt = system_prompt
         
         # Initialize LLM
-        api_key = api_key or os.getenv("OPENAI_API_KEY")
-        if not api_key:
-            raise ValueError(
-                "OpenAI API key is required. Set OPENAI_API_KEY environment variable."
-            )
-        
-        self.llm = ChatOpenAI(
-            model=model_name,
-            temperature=temperature,
-            api_key=api_key
-        )
+        from ..utils.openrouter_client import create_llm
+        self.llm = create_llm(model_name=model_name, temperature=temperature, api_key=api_key)
         
         # Build prompt template
         self.prompt_template = ChatPromptTemplate.from_messages([
