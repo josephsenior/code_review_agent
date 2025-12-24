@@ -1,4 +1,9 @@
-# Intelligent Code Review Agent
+﻿#  Intelligent Code Review Agent
+
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io/)
+[![LangChain](https://img.shields.io/badge/LangChain-0.1+-orange.svg)](https://www.langchain.com/)
 
 A code review system where multiple specialized AI agents work together to analyze your code, find issues, suggest improvements, and generate detailed review reports. Think of it as having a team of expert code reviewers, each focusing on their area of expertise.
 
@@ -33,7 +38,7 @@ An orchestrator coordinates all these agents, collects their findings, and puts 
 ## Tech Stack
 
 - **LangChain**: Agent framework
-- **OpenAI API**: LLM for code analysis
+- **Gemini API**: LLM for code analysis
 - **Streamlit**: Web interface
 - **Python**: Core implementation
 
@@ -49,13 +54,22 @@ pip install -r requirements.txt
 ```
 
 2. **Set up environment:**
-   
-   Create a `.env` file in the project root and add your OpenAI API key:
+
+   Copy the example env and add your Gemini API key (do not commit the real `.env`):
+
+   - Unix / macOS:
    ```bash
-   OPENAI_API_KEY=your_actual_api_key_here
+   cp .env.example .env
    ```
-   
-   You can get an API key from [OpenAI's platform](https://platform.openai.com/api-keys).
+
+   - Windows (PowerShell):
+   ```powershell
+   Copy-Item .env.example .env
+   ```
+
+   Then edit `.env` and set `GEMINI_API_KEY` to your key.
+
+   You can get an API key from [Gemini's platform](https://platform.Gemini.com/api-keys).
 
 3. **Run the application:**
 ```bash
@@ -86,4 +100,37 @@ Run full test with API key:
 ```bash
 python test_review.py
 ```
+
+Security note: If you accidentally committed secrets (for example a real `.env` file), remove it from future commits with:
+
+```bash
+git rm --cached .env
+git commit -m "remove sensitive .env"
+```
+
+To purge secrets from repository history you will need to rewrite history (for example using `git filter-repo` or the BFG Repo Cleaner) — take care, this rewrites commits and will require force-push.
+
+##  Tech Stack
+
+- **LangChain**: Agent framework and orchestration
+- **Gemini API**: LLM for code analysis
+- **Streamlit**: Web interface
+- **Python 3.8+**: Core language
+
+##  Use Cases
+
+- **Code Quality Assurance**: Automated code review before commits
+- **Security Auditing**: Detect security vulnerabilities automatically
+- **Performance Optimization**: Identify performance bottlenecks
+- **Best Practices**: Ensure code follows best practices
+- **Documentation**: Evaluate and improve code documentation
+
+##  Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+
+##  License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
 

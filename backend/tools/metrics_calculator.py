@@ -4,7 +4,7 @@ Metrics Calculator Tool for Code Review Agent.
 Calculates various code metrics for analysis.
 """
 
-from typing import Dict, Any
+from typing import Any, Dict
 
 
 class MetricsCalculator:
@@ -35,12 +35,11 @@ class MetricsCalculator:
         
         metrics = {
             "total_lines": len(lines),
-            "code_lines": len([l for l in lines if l.strip() and not l.strip().startswith("#")]),
-            "comment_lines": len([l for l in lines if l.strip().startswith("#")]),
-            "blank_lines": len([l for l in lines if not l.strip()]),
-            "average_line_length": sum(len(l) for l in lines) / len(lines) if lines else 0,
+            "code_lines": len([line for line in lines if line.strip() and not line.strip().startswith("#")]),
+            "comment_lines": len([line for line in lines if line.strip().startswith("#")]),
+            "blank_lines": len([line for line in lines if not line.strip()]),
+            "average_line_length": sum(len(line) for line in lines) / len(lines) if lines else 0,
             "language": language
         }
         
         return metrics
-

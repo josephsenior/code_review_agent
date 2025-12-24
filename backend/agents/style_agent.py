@@ -4,7 +4,8 @@ Style Agent for Code Review.
 Reviews code style, conventions, and formatting according to language-specific standards.
 """
 
-from typing import Dict, Any, List
+from typing import Any, Dict, List
+
 from .base_agent import BaseCodeReviewAgent
 
 
@@ -30,9 +31,9 @@ class StyleAgent(BaseCodeReviewAgent):
         Initialize the Style Agent.
         
         Args:
-            model_name: OpenAI model name
+            model_name: Gemini model name
             temperature: LLM temperature
-            api_key: OpenAI API key
+            api_key: Gemini API key
         """
         system_prompt = """You are a code style reviewer. Your role is to:
 1. Check code style against language-specific conventions (PEP 8 for Python, etc.)
@@ -233,7 +234,7 @@ Format your response clearly with actionable style improvements."""
                         line_match = re.search(r'line\s+(\d+)', line_lower)
                         if line_match:
                             current_issue["line"] = int(line_match.group(1))
-                    except:
+                    except Exception:
                         pass
                 current_issue["message"] += " " + line.strip()
         
@@ -256,4 +257,3 @@ Format your response clearly with actionable style improvements."""
                 score -= 0.5
         
         return max(0.0, score)
-

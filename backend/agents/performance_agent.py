@@ -4,9 +4,10 @@ Performance Agent for Code Review.
 Analyzes code for performance bottlenecks, inefficiencies, and optimization opportunities.
 """
 
-from typing import Dict, Any, List
-from .base_agent import BaseCodeReviewAgent
+from typing import Any, Dict, List
+
 from ..tools.ast_analyzer import ASTAnalyzer
+from .base_agent import BaseCodeReviewAgent
 
 
 class PerformanceAgent(BaseCodeReviewAgent):
@@ -32,9 +33,9 @@ class PerformanceAgent(BaseCodeReviewAgent):
         Initialize the Performance Agent.
         
         Args:
-            model_name: OpenAI model name
+            model_name: Gemini model name
             temperature: LLM temperature
-            api_key: OpenAI API key
+            api_key: Gemini API key
         """
         system_prompt = """You are a performance optimization expert. Your role is to:
 1. Analyze time complexity (Big O notation)
@@ -153,7 +154,6 @@ Format your response clearly with prioritized recommendations."""
     ) -> List[Dict[str, Any]]:
         """Identify common performance anti-patterns."""
         issues = []
-        code_lower = code.lower()
         lines = code.split("\n")
         
         # Check for nested loops
@@ -167,15 +167,6 @@ Format your response clearly with prioritized recommendations."""
             })
         
         # Check for common performance issues
-        performance_patterns = {
-            "nested_loops": ["for", "while", "for", "while"],
-            "inefficient_search": [".find(", ".index(", "in list"],
-            "string_concat": ["+=", "str + str"],
-            "large_list_comprehension": ["[", "for", "if", "for"],
-            "unclosed_file": ["open(", "with open("]
-        }
-        
-        # Simple pattern detection
         for i, line in enumerate(lines, 1):
             line_lower = line.lower()
             
@@ -199,6 +190,7 @@ Format your response clearly with prioritized recommendations."""
                     "message": "String concatenation in loop",
                     "suggestion": "Consider using join() or list comprehension"
                 })
+        
         
         return issues
     
@@ -268,7 +260,7 @@ Class Count: {metrics.get('class_count', 'N/A')}"""
                         line_match = re.search(r'line\s+(\d+)', line_lower)
                         if line_match:
                             current_issue["line"] = int(line_match.group(1))
-                    except:
+                    except Exception:
                         pass
                 current_issue["message"] += " " + line.strip()
         
@@ -309,4 +301,3 @@ Class Count: {metrics.get('class_count', 'N/A')}"""
             score -= 0.5
         
         return max(0.0, score)
-

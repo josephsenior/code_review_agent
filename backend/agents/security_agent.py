@@ -5,9 +5,10 @@ Identifies security vulnerabilities, risks, and insecure coding practices.
 Uses Guardrails pattern to ensure code safety.
 """
 
-from typing import Dict, Any, List
-from .base_agent import BaseCodeReviewAgent
+from typing import Any, Dict, List
+
 from ..tools.ast_analyzer import ASTAnalyzer
+from .base_agent import BaseCodeReviewAgent
 
 
 class SecurityAgent(BaseCodeReviewAgent):
@@ -33,9 +34,9 @@ class SecurityAgent(BaseCodeReviewAgent):
         Initialize the Security Agent.
         
         Args:
-            model_name: OpenAI model name
+            model_name: Gemini model name
             temperature: LLM temperature (low for consistent security checks)
-            api_key: OpenAI API key
+            api_key: Gemini API key
         """
         system_prompt = """You are a security expert specializing in code security review. Your role is to:
 1. Identify security vulnerabilities (SQL injection, XSS, CSRF, etc.)
@@ -78,9 +79,6 @@ Report issues with severity levels: critical, high, medium, low."""
             Dictionary with security analysis results
         """
         # Analyze code structure
-        ast_result = {}
-        if language.lower() == "python":
-            ast_result = self.ast_analyzer.parse(code, language)
         
         # Check for security patterns
         pattern_matches = self._check_security_patterns(code, language)
@@ -259,7 +257,7 @@ Format your response clearly with prioritized issues."""
                         line_match = re.search(r'line\s+(\d+)', line_lower)
                         if line_match:
                             current_vuln["line"] = int(line_match.group(1))
-                    except:
+                    except Exception:
                         pass
                 current_vuln["message"] += " " + line.strip()
         
@@ -286,4 +284,3 @@ Format your response clearly with prioritized issues."""
                 score -= 0.5
         
         return max(0.0, score)
-

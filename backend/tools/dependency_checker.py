@@ -4,8 +4,8 @@ Dependency Checker Tool for Code Review Agent.
 Checks for insecure or outdated dependencies.
 """
 
-from typing import Dict, Any, List
 import re
+from typing import Any, Dict
 
 
 class DependencyChecker:

@@ -7,15 +7,22 @@ and report generator without requiring API calls.
 
 import sys
 from pathlib import Path
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 # Add backend to path
 backend_path = Path(__file__).parent / "backend"
 sys.path.insert(0, str(backend_path.parent))
 
-from backend.core.orchestrator import CodeReviewOrchestrator
-from backend.core.report_generator import ReportGenerator
+import warnings
 
+from backend.core.orchestrator import CodeReviewOrchestrator  # noqa: E402
+from backend.core.report_generator import ReportGenerator  # noqa: E402
+
+# Silence LangChain deprecation messages during tests (if langchain is present)
+warnings.filterwarnings(
+    "ignore",
+    message=r".*Importing chat models from langchain is deprecated.*",
+)
 
 # Sample code with various issues
 SAMPLE_CODE = """
@@ -137,19 +144,23 @@ def test_with_mocks():
             return "Analysis complete."
     
     try:
-        # Patch the base agent's _invoke method
-        with patch('backend.agents.base_agent.BaseCodeReviewAgent._invoke', side_effect=mock_invoke):
+        # Patch the base agent's _invoke method and LLM init paths so no real models are created
+           # create_llm should return a callable usable by the prompt chain
+           dummy_llm = lambda _input: "__MOCK_LLM_RESPONSE__"
+           with patch('backend.agents.base_agent.BaseCodeReviewAgent._invoke', side_effect=mock_invoke), \
+               patch('backend.utils.openrouter_client.create_llm', return_value=dummy_llm), \
+               patch('backend.utils.openrouter_client.init_chat_model', return_value=dummy_llm):
             # Also need to set a dummy API key for initialization
             import os
-            original_key = os.environ.get("OPENAI_API_KEY")
-            os.environ["OPENAI_API_KEY"] = "test-key-for-mock"
-            
+            original_key = os.environ.get("GEMINI_API_KEY")
+            os.environ["GEMINI_API_KEY"] = "test-key-for-mock"
+
             try:
                 print("Initializing orchestrator with mocks...")
                 orchestrator = CodeReviewOrchestrator()
                 print("[OK] Orchestrator initialized")
                 print()
-                
+
                 print("Running code review...")
                 print("-" * 70)
                 results = orchestrator.review(
@@ -210,25 +221,21 @@ def test_with_mocks():
                 print("=" * 70)
                 print()
                 print("The system is working correctly!")
-                print("To test with real API calls, set OPENAI_API_KEY and run:")
+                print("To test with real API calls, set GEMINI_API_KEY and run:")
                 print("  python test_review.py")
-                
             finally:
                 # Restore original API key
                 if original_key:
-                    os.environ["OPENAI_API_KEY"] = original_key
-                elif "OPENAI_API_KEY" in os.environ:
-                    del os.environ["OPENAI_API_KEY"]
+                    os.environ["GEMINI_API_KEY"] = original_key
+                elif "GEMINI_API_KEY" in os.environ:
+                    del os.environ["GEMINI_API_KEY"]
         
     except Exception as e:
         print(f"Error during mock test: {e}")
         import traceback
         traceback.print_exc()
-        return 1
-    
-    return 0
+        raise
 
 
 if __name__ == "__main__":
-    exit(test_with_mocks())
-
+    test_with_mocks()

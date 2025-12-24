@@ -2,16 +2,18 @@
 Main Streamlit Application for the Code Review Agent System.
 """
 
-import streamlit as st
 import sys
 from pathlib import Path
+
+import streamlit as st
 
 # Add backend to path
 backend_path = Path(__file__).parent.parent / "backend"
 sys.path.insert(0, str(backend_path.parent))
 
-from backend.core.orchestrator import CodeReviewOrchestrator
-from backend.core.report_generator import ReportGenerator
+# Import at top level to avoid E402
+from backend.core.orchestrator import CodeReviewOrchestrator  # noqa: E402
+from backend.core.report_generator import ReportGenerator  # noqa: E402
 
 # Page configuration
 st.set_page_config(
@@ -28,7 +30,7 @@ if "orchestrator" not in st.session_state:
         st.session_state.review_result = None
     except Exception as e:
         st.error(f"Failed to initialize orchestrator: {str(e)}")
-        st.info("Make sure OPENAI_API_KEY is set in your .env file")
+        st.info("Make sure GEMINI_API_KEY is set in your .env file")
         st.stop()
 
 
@@ -148,7 +150,7 @@ def render_code_input(selected_agents: list, language: str):
                 
                 error_msg = str(e).lower()
                 if "api key" in error_msg:
-                    st.info("Tip: Make sure your OpenAI API key is set in the .env file.")
+                    st.info("Tip: Make sure your Gemini API key is set in the .env file.")
                 elif "timeout" in error_msg:
                     st.info("Tip: The request timed out. Try again or simplify your code.")
                 elif "rate limit" in error_msg:
@@ -357,4 +359,3 @@ def render_report():
 
 if __name__ == "__main__":
     main()
-

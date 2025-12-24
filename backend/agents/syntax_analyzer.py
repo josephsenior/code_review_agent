@@ -4,9 +4,10 @@ Syntax Analyzer Agent for Code Review.
 Analyzes code for syntax errors, basic structure issues, and fundamental problems.
 """
 
-from typing import Dict, Any
-from .base_agent import BaseCodeReviewAgent
+from typing import Any, Dict
+
 from ..tools.ast_analyzer import ASTAnalyzer
+from .base_agent import BaseCodeReviewAgent
 
 
 class SyntaxAnalyzerAgent(BaseCodeReviewAgent):
@@ -26,9 +27,9 @@ class SyntaxAnalyzerAgent(BaseCodeReviewAgent):
         Initialize the Syntax Analyzer Agent.
         
         Args:
-            model_name: OpenAI model name
+            model_name: Gemini model name
             temperature: LLM temperature (very low for syntax checking)
-            api_key: OpenAI API key
+            api_key: Gemini API key
         """
         system_prompt = """You are a syntax analyzer for code review. Your role is to:
 1. Identify syntax errors and basic structural issues
@@ -161,11 +162,10 @@ Format your response clearly, listing each issue with its line number if possibl
                     line_match = re.search(r'line\s+(\d+)', line_lower)
                     if line_match:
                         current_issue["line"] = int(line_match.group(1))
-                except:
+                except Exception:
                     pass
         
         if current_issue:
             issues.append(current_issue)
         
         return issues
-

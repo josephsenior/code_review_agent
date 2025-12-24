@@ -11,10 +11,17 @@ from pathlib import Path
 backend_path = Path(__file__).parent / "backend"
 sys.path.insert(0, str(backend_path.parent))
 
-from backend.tools.ast_analyzer import ASTAnalyzer
-from backend.tools.dependency_checker import DependencyChecker
-from backend.tools.metrics_calculator import MetricsCalculator
+import warnings
 
+from backend.tools.ast_analyzer import ASTAnalyzer  # noqa: E402
+from backend.tools.dependency_checker import DependencyChecker  # noqa: E402
+from backend.tools.metrics_calculator import MetricsCalculator  # noqa: E402
+
+# Silence LangChain deprecation messages during tests (if langchain is present)
+warnings.filterwarnings(
+    "ignore",
+    message=r".*Importing chat models from langchain is deprecated.*",
+)
 
 # Sample code with various issues for testing
 SAMPLE_CODE = """
@@ -84,7 +91,10 @@ def test_ast_analyzer():
         print(f"[ERROR] Parse error: {result.get('error')}")
     
     print()
-    return result
+    assert result.get("valid") is True
+    assert isinstance(result.get("functions"), list)
+    assert isinstance(result.get("classes"), list)
+    assert isinstance(result.get("imports"), list)
 
 
 def test_dependency_checker():
@@ -100,7 +110,8 @@ def test_dependency_checker():
         print(f"  - {dep['module']} (line {dep['line']})")
     
     print()
-    return result
+    assert isinstance(result.get("dependencies"), list)
+    assert result.get("dependency_count", 0) >= 0
 
 
 def test_metrics_calculator():
@@ -111,7 +122,7 @@ def test_metrics_calculator():
     calculator = MetricsCalculator()
     result = calculator.calculate_metrics(SAMPLE_CODE, "python")
     
-    print(f"[OK] Metrics calculated:")
+    print("[OK] Metrics calculated:")
     print(f"  Total lines: {result.get('total_lines', 0)}")
     print(f"  Code lines: {result.get('code_lines', 0)}")
     print(f"  Comment lines: {result.get('comment_lines', 0)}")
@@ -119,7 +130,8 @@ def test_metrics_calculator():
     print(f"  Average line length: {result.get('average_line_length', 0):.1f}")
     
     print()
-    return result
+    assert result.get("total_lines", 0) > 0
+    assert result.get("code_lines", 0) >= 0
 
 
 def test_security_patterns():
@@ -154,7 +166,9 @@ def test_security_patterns():
         print("[OK] No obvious security patterns detected")
     
     print()
-    return found_patterns
+    # At minimum the sample includes a hardcoded password and SQL pattern
+    assert isinstance(found_patterns, list)
+    assert any(p["type"] == "hardcoded_secrets" for p in found_patterns) or any(p["type"] == "sql_injection" for p in found_patterns)
 
 
 def main():
@@ -174,10 +188,10 @@ def main():
         dep_result = test_dependency_checker()
         
         # Test metrics calculator
-        metrics_result = test_metrics_calculator()
+        _ = test_metrics_calculator()
         
         # Test security patterns
-        security_patterns = test_security_patterns()
+        test_security_patterns()
         
         # Summary
         print("=" * 70)
@@ -185,12 +199,12 @@ def main():
         print("=" * 70)
         print(f"[OK] AST Analyzer: {'PASS' if ast_result.get('valid') else 'FAIL'}")
         print(f"[OK] Dependency Checker: PASS ({dep_result.get('dependency_count', 0)} dependencies)")
-        print(f"[OK] Metrics Calculator: PASS")
-        print(f"[OK] Security Pattern Detection: PASS ({len(security_patterns)} patterns)")
+        print("[OK] Metrics Calculator: PASS")
+        print("[OK] Security Pattern Detection: PASS")
         print()
         print("All core tools are working correctly!")
         print()
-        print("Note: To test with full LLM agents, set OPENAI_API_KEY in .env file")
+        print("Note: To test with full LLM agents, set GEMINI_API_KEY in .env file")
         print("      and run: python test_review.py")
         print()
         
@@ -198,11 +212,8 @@ def main():
         print(f"Error during testing: {e}")
         import traceback
         traceback.print_exc()
-        return 1
-    
-    return 0
+        raise
 
 
 if __name__ == "__main__":
-    exit(main())
-
+    main()

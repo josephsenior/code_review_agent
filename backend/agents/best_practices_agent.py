@@ -4,9 +4,10 @@ Best Practices Agent for Code Review.
 Reviews code against language-specific best practices, design patterns, and architectural principles.
 """
 
-from typing import Dict, Any, List
-from .base_agent import BaseCodeReviewAgent
+from typing import Any, Dict, List
+
 from ..tools.ast_analyzer import ASTAnalyzer
+from .base_agent import BaseCodeReviewAgent
 
 
 class BestPracticesAgent(BaseCodeReviewAgent):
@@ -32,9 +33,9 @@ class BestPracticesAgent(BaseCodeReviewAgent):
         Initialize the Best Practices Agent.
         
         Args:
-            model_name: OpenAI model name
+            model_name: Gemini model name
             temperature: LLM temperature
-            api_key: OpenAI API key
+            api_key: Gemini API key
         """
         system_prompt = """You are a software architecture and best practices expert. Your role is to:
 1. Review code against language-specific best practices
@@ -257,7 +258,7 @@ Format your response clearly with prioritized recommendations."""
                         line_match = re.search(r'line\s+(\d+)', line_lower)
                         if line_match:
                             current_issue["line"] = int(line_match.group(1))
-                    except:
+                    except Exception:
                         pass
                 
                 # Detect category
@@ -289,4 +290,3 @@ Format your response clearly with prioritized recommendations."""
                 score -= 0.5
         
         return max(0.0, score)
-

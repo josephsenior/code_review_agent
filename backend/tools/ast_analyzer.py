@@ -5,7 +5,7 @@ Parses code into Abstract Syntax Trees and extracts structural information.
 """
 
 import ast
-from typing import Dict, Any, List, Optional
+from typing import Any, Dict, List
 
 
 class ASTAnalyzer:

@@ -12,9 +12,8 @@ from pathlib import Path
 backend_path = Path(__file__).parent / "backend"
 sys.path.insert(0, str(backend_path.parent))
 
-from backend.core.orchestrator import CodeReviewOrchestrator
-from backend.core.report_generator import ReportGenerator
-
+from backend.core.orchestrator import CodeReviewOrchestrator  # noqa: E402
+from backend.core.report_generator import ReportGenerator  # noqa: E402
 
 # Sample code with various issues for testing
 SAMPLE_CODE = """
@@ -84,8 +83,8 @@ def main():
     print()
     
     # Check for API key
-    if not os.getenv("OPENAI_API_KEY"):
-        print("Warning: OPENAI_API_KEY not set. Using placeholder.")
+    if not os.getenv("GEMINI_API_KEY"):
+        print("Warning: GEMINI_API_KEY not set. Using placeholder.")
         print("Set your API key in .env file for actual reviews.")
         print()
     
@@ -168,4 +167,3 @@ def main():
 
 if __name__ == "__main__":
     exit(main())
-

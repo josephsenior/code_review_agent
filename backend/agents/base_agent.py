@@ -5,13 +5,12 @@ Provides common functionality like LLM initialization, prompt templates,
 and error handling that all code review agents share.
 """
 
-import os
 from abc import ABC, abstractmethod
-from typing import Dict, Any, Optional, List
+from typing import Any, Dict, Optional
+
 from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate
 
 load_dotenv()
 
@@ -41,9 +40,9 @@ class BaseCodeReviewAgent(ABC):
         Args:
             role: The role/name of this agent
             system_prompt: System prompt defining the agent's behavior
-            model_name: OpenAI model to use
+            model_name: Gemini model to use
             temperature: Temperature for LLM responses (lower for code review)
-            api_key: OpenAI API key (if not provided, uses env var)
+            api_key: Gemini API key (if not provided, uses env var)
         """
         self.role = role
         self.system_prompt = system_prompt
@@ -105,4 +104,5 @@ class BaseCodeReviewAgent(ABC):
     def get_role(self) -> str:
         """Get the agent's role."""
         return self.role
+
 

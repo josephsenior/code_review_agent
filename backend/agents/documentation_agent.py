@@ -4,9 +4,10 @@ Documentation Agent for Code Review.
 Reviews code documentation quality, docstrings, comments, and README files.
 """
 
-from typing import Dict, Any, List
-from .base_agent import BaseCodeReviewAgent
+from typing import Any, Dict, List
+
 from ..tools.ast_analyzer import ASTAnalyzer
+from .base_agent import BaseCodeReviewAgent
 
 
 class DocumentationAgent(BaseCodeReviewAgent):
@@ -31,9 +32,9 @@ class DocumentationAgent(BaseCodeReviewAgent):
         Initialize the Documentation Agent.
         
         Args:
-            model_name: OpenAI model name
+            model_name: Gemini model name
             temperature: LLM temperature
-            api_key: OpenAI API key
+            api_key: Gemini API key
         """
         system_prompt = """You are a documentation quality reviewer. Your role is to:
 1. Review function and class docstrings
@@ -305,7 +306,7 @@ Documentation Coverage: {stats.get('coverage_percentage', 0):.1f}%"""
                         line_match = re.search(r'line\s+(\d+)', line_lower)
                         if line_match:
                             current_issue["line"] = int(line_match.group(1))
-                    except:
+                    except Exception:
                         pass
                 current_issue["message"] += " " + line.strip()
         
@@ -340,4 +341,3 @@ Documentation Coverage: {stats.get('coverage_percentage', 0):.1f}%"""
             score -= 1.5
         
         return max(0.0, score)
-
