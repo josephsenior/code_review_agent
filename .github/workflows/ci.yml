@@ -1,0 +1,31 @@
+name: Python CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v4
+      with:
+        python-python: '3.9'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    - name: Lint with black
+      run: |
+        black . --check
+    - name: Lint with pylint
+      run: |
+        pylint backend/ --fail-under=8.0
+    - name: Run dry-run tests
+      run: |
+        python test_review_dry_run.py

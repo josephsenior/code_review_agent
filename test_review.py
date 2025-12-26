@@ -81,30 +81,27 @@ def main():
     print("Code Review Agent - Test Run")
     print("=" * 70)
     print()
-    
+
     # Check for API key
     if not os.getenv("GEMINI_API_KEY"):
         print("Warning: GEMINI_API_KEY not set. Using placeholder.")
         print("Set your API key in .env file for actual reviews.")
         print()
-    
+
     try:
         # Initialize orchestrator
         print("Initializing orchestrator...")
         orchestrator = CodeReviewOrchestrator()
         print("Orchestrator initialized successfully!")
         print()
-        
+
         # Run review
         print("Running code review on sample code...")
         print("-" * 70)
-        results = orchestrator.review(
-            code=SAMPLE_CODE,
-            language="python"
-        )
+        results = orchestrator.review(code=SAMPLE_CODE, language="python")
         print("-" * 70)
         print()
-        
+
         # Display summary
         summary = results.get("summary", {})
         print("=" * 70)
@@ -118,7 +115,7 @@ def main():
         print(f"  - Medium: {summary.get('medium_issues', 0)}")
         print(f"  - Low: {summary.get('low_issues', 0)}")
         print()
-        
+
         # Display agent scores
         scores = summary.get("scores", {})
         if scores:
@@ -126,21 +123,21 @@ def main():
             for agent, score in scores.items():
                 print(f"  - {agent.replace('_', ' ').title()}: {score:.1f}/10")
             print()
-        
+
         # Generate and display report
         print("=" * 70)
         print("GENERATING REPORT")
         print("=" * 70)
         print()
-        
+
         report_generator = ReportGenerator()
         report = report_generator.generate_report(results, format_type="markdown")
-        
+
         # Save report
         report_path = Path("test_review_report.md")
         with open(report_path, "w", encoding="utf-8") as f:
             f.write(report)
-        
+
         print(f"Report saved to: {report_path}")
         print()
         print("=" * 70)
@@ -150,18 +147,19 @@ def main():
         print("\n".join(report.split("\n")[:100]))
         if len(report.split("\n")) > 100:
             print("\n... (report truncated, see full report in file)")
-        
+
         print()
         print("=" * 70)
         print("Test completed successfully!")
         print("=" * 70)
-        
+
     except Exception as e:
         print(f"Error during review: {e}")
         import traceback
+
         traceback.print_exc()
         return 1
-    
+
     return 0
 
 
