@@ -4,7 +4,7 @@
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io/)
 [![LangChain](https://img.shields.io/badge/LangChain-0.1+-orange.svg)](https://www.langchain.com/)
-[![CI](https://github.com/your-username/code_review_agent/actions/workflows/ci.yml/badge.svg)](https://github.com/your-username/code_review_agent/actions/workflows/ci.yml)
+[![CI](https://github.com/josephsenior/Code_Review_Agent/actions/workflows/ci.yml/badge.svg)](https://github.com/josephsenior/Code_Review_Agent/actions/workflows/ci.yml)
 
 A code review system where multiple specialized AI agents work together to analyze your code, find issues, suggest improvements, and generate detailed review reports. Think of it as having a team of expert code reviewers, each focusing on their area of expertise.
 
