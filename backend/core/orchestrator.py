@@ -33,7 +33,7 @@ class CodeReviewOrchestrator:
 
     def __init__(
         self,
-        model_name: str = "gpt-4",
+        model_name: Optional[str] = None,
         temperature: float = 0.3,
         api_key: Optional[str] = None,
     ):
@@ -107,7 +107,8 @@ class CodeReviewOrchestrator:
                 "documentation",
             ]
 
-        print(f"[Orchestrator] Starting code review for {language} code...")
+        # No logging for clean execution unless requested
+        pass
 
         # Calculate basic metrics first
         metrics = self.metrics_calculator.calculate_metrics(code, language)
@@ -122,93 +123,48 @@ class CodeReviewOrchestrator:
             "summary": {},
         }
 
-        # Run each agent
+        # Use individual agents for specific checks
         try:
-            # 1. Syntax Analyzer (always run first - critical)
-            if "syntax" in include_agents:
-                print("[Orchestrator] Running Syntax Analyzer...")
-                syntax_result = self.syntax_agent.review(code, language)
-                results["agent_results"]["syntax"] = syntax_result
-            else:
-                results["agent_results"]["syntax"] = {"skipped": True}
-
+            if not include_agents or "syntax" in include_agents:
+                results["agent_results"]["syntax"] = self.syntax_agent.review(code, language)
         except Exception as e:
-            print(f"[Orchestrator] Syntax Analyzer error: {e}")
-            results["agent_results"]["syntax"] = {"error": str(e), "status": "failed"}
+            results["agent_results"]["syntax"] = {"error": str(e), "skipped": True}
 
         try:
-            # 2. Security Agent
-            if "security" in include_agents:
-                print("[Orchestrator] Running Security Agent...")
-                security_result = self.security_agent.review(code, language)
-                results["agent_results"]["security"] = security_result
-            else:
-                results["agent_results"]["security"] = {"skipped": True}
-
+            if not include_agents or "security" in include_agents:
+                results["agent_results"]["security"] = self.security_agent.review(code, language)
         except Exception as e:
-            print(f"[Orchestrator] Security Agent error: {e}")
-            results["agent_results"]["security"] = {"error": str(e), "status": "failed"}
+            results["agent_results"]["security"] = {"error": str(e), "skipped": True}
 
         try:
-            # 3. Performance Agent
-            if "performance" in include_agents:
-                print("[Orchestrator] Running Performance Agent...")
-                performance_result = self.performance_agent.review(code, language)
-                results["agent_results"]["performance"] = performance_result
-            else:
-                results["agent_results"]["performance"] = {"skipped": True}
-
+            if not include_agents or "performance" in include_agents:
+                results["agent_results"]["performance"] = self.performance_agent.review(
+                    code, language
+                )
         except Exception as e:
-            print(f"[Orchestrator] Performance Agent error: {e}")
-            results["agent_results"]["performance"] = {
-                "error": str(e),
-                "status": "failed",
-            }
+            results["agent_results"]["performance"] = {"error": str(e), "skipped": True}
 
         try:
-            # 4. Style Agent
-            if "style" in include_agents:
-                print("[Orchestrator] Running Style Agent...")
-                style_result = self.style_agent.review(code, language)
-                results["agent_results"]["style"] = style_result
-            else:
-                results["agent_results"]["style"] = {"skipped": True}
-
+            if not include_agents or "style" in include_agents:
+                results["agent_results"]["style"] = self.style_agent.review(code, language)
         except Exception as e:
-            print(f"[Orchestrator] Style Agent error: {e}")
-            results["agent_results"]["style"] = {"error": str(e), "status": "failed"}
+            results["agent_results"]["style"] = {"error": str(e), "skipped": True}
 
         try:
-            # 5. Best Practices Agent
-            if "best_practices" in include_agents:
-                print("[Orchestrator] Running Best Practices Agent...")
-                best_practices_result = self.best_practices_agent.review(code, language)
-                results["agent_results"]["best_practices"] = best_practices_result
-            else:
-                results["agent_results"]["best_practices"] = {"skipped": True}
-
+            if not include_agents or "best_practices" in include_agents:
+                results["agent_results"]["best_practices"] = self.best_practices_agent.review(
+                    code, language
+                )
         except Exception as e:
-            print(f"[Orchestrator] Best Practices Agent error: {e}")
-            results["agent_results"]["best_practices"] = {
-                "error": str(e),
-                "status": "failed",
-            }
+            results["agent_results"]["best_practices"] = {"error": str(e), "skipped": True}
 
         try:
-            # 6. Documentation Agent
-            if "documentation" in include_agents:
-                print("[Orchestrator] Running Documentation Agent...")
-                documentation_result = self.documentation_agent.review(code, language)
-                results["agent_results"]["documentation"] = documentation_result
-            else:
-                results["agent_results"]["documentation"] = {"skipped": True}
-
+            if not include_agents or "documentation" in include_agents:
+                results["agent_results"]["documentation"] = self.documentation_agent.review(
+                    code, language
+                )
         except Exception as e:
-            print(f"[Orchestrator] Documentation Agent error: {e}")
-            results["agent_results"]["documentation"] = {
-                "error": str(e),
-                "status": "failed",
-            }
+            results["agent_results"]["documentation"] = {"error": str(e), "skipped": True}
 
         # Generate summary
         results["summary"] = self._generate_summary(results)

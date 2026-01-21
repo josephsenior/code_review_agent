@@ -25,7 +25,7 @@ class SecurityAgent(BaseCodeReviewAgent):
     """
 
     def __init__(
-        self, model_name: str = "gpt-4", temperature: float = 0.2, api_key: str = None
+        self, model_name: str = None, temperature: float = 0.2, api_key: str = None
     ):
         """
         Initialize the Security Agent.

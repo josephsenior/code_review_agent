@@ -352,8 +352,10 @@ def render_report():
     # Display report
     if report_format == "JSON":
         st.json(result)
+    elif report_format == "Markdown":
+        st.markdown(report)
     else:
-        st.markdown(report) if report_format == "Markdown" else st.text(report)
+        st.text(report)
 
     # Download button
     st.download_button(

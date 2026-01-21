@@ -18,7 +18,7 @@ class SyntaxAnalyzerAgent(BaseCodeReviewAgent):
     """
 
     def __init__(
-        self, model_name: str = "gpt-4", temperature: float = 0.1, api_key: str = None
+        self, model_name: str = None, temperature: float = 0.1, api_key: str = None
     ):
         """
         Initialize the Syntax Analyzer Agent.

@@ -23,7 +23,7 @@ class DocumentationAgent(BaseCodeReviewAgent):
     """
 
     def __init__(
-        self, model_name: str = "gpt-4", temperature: float = 0.3, api_key: str = None
+        self, model_name: str = None, temperature: float = 0.3, api_key: str = None
     ):
         """
         Initialize the Documentation Agent.
@@ -182,8 +182,9 @@ Format your response clearly with actionable documentation improvements."""
             else:
                 stats["coverage_percentage"] = 0.0
 
-        except Exception as e:
-            print(f"Error analyzing docstrings: {e}")
+        except Exception:
+            # If docstring analysis fails, we still continue with LLM review
+            pass
 
         return stats
 

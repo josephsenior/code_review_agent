@@ -30,7 +30,7 @@ class BaseCodeReviewAgent(ABC):
         self,
         role: str,
         system_prompt: str,
-        model_name: str = "gpt-4",
+        model_name: Optional[str] = None,
         temperature: float = 0.3,
         api_key: Optional[str] = None,
     ):
@@ -78,7 +78,6 @@ class BaseCodeReviewAgent(ABC):
             return result
         except Exception as e:
             error_msg = f"[{self.role}] Error processing request: {str(e)}"
-            print(error_msg)
             raise RuntimeError(error_msg) from e
 
     @abstractmethod
